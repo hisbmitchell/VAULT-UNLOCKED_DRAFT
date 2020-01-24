@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NON/BEING</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:700&display=swap" rel="stylesheet">
+
+
+	</head>
+
+<body>
+
+	<div>
+		<p> VAULT <br><br>
+		VAULT VAULT VAULT<br><br>
+		VAULT VAULT<br><br>
+		VAULT <br><br>
+
+
+
+
+		</p>
+
+	<p>VAULT <br><br>
+		VAULT VAULT<br><br>
+		VAULT <br><br>
+		>VAULT <br><br>
+		VAULT VAULT<br><br>
+		VAULT VAULT VAULT VAULT VAULT<br><br>VAULT <br><br>
+
+	</p>
+
+	<p>VAULT <br><br>
+		VAULT VAULT<br><br>
+		VAULT <br><br>
+		>VAULT <br><br>
+		VAULT VAULT<br><br>
+		VAULT VAULT VAULT VAULT VAULT<br><br>VAULT <br><br>
+
+	</p>
+
+		</div>
+
+
+	<canvas id="c"></canvas>
+
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="js/scripts.js"></script>
+
+	</body>
+
+	<script type="module">
+import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/build/three.module.js';
+import {EffectComposer} from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/postprocessing/EffectComposer.js';
+import {RenderPass} from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/postprocessing/RenderPass.js';
+import {BloomPass} from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/postprocessing/BloomPass.js';
+import {FilmPass} from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/postprocessing/FilmPass.js';
+import {CustomPass} from './postprocessing/CustomPass.js';
+
+import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
+
+
+function main() {
+
+	const canvas = document.querySelector('#c');
+	const renderer = new THREE.WebGLRenderer({canvas});
+
+	const fov = 75;
+	const aspect = 2;  // the canvas default
+	const near = 0.1;
+	const far = 6;
+	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+	camera.position.z = 2;
+
+	const scene = new THREE.Scene();
+
+	{
+	  const color = 0xFFFFFF;
+	  const intensity = 4;
+	  const light = new THREE.DirectionalLight(color, intensity);
+	  light.position.set(-1, 2, 4);
+	  scene.add(light);
+	}
+
+	var imageTexture = new THREE.TextureLoader().load( 'textures/liquid_chrome.jpg' );
+
+
+	imageTexture.wrapS = imageTexture.wrapT = THREE.RepeatWrapping;
+	
+	var envTexture = new THREE.TextureLoader().load( 'textures/map.jpg' );
+
+
+	var loader = new THREE.FontLoader();
+	loader.load( 'fonts/helvetiker_bold.typeface.json', function ( font )
+
+	{
+		// This code will only execute when the font has loaded.
+		var fontSize = .4;
+		var textX = -1.55;
+
+		if (window.innerWidth <= 411) {
+				fontSize = .33;
+				textX = -1.32;
+				//textPosition = .5;
+		}
+
+		if (window.innerWidth >= 800) {
+				fontSize = 1.;
+				textX = -4;
+				//textPosition = .5;
+		}
+
+		//var material = new THREE.MeshLambertMaterial( { color: 0x0033ff, specular: 0x555555, shininess: 30 } );
+
+		var material = new THREE.MeshLambertMaterial( { color: 0xeb4034, ambient: 0xeb4034 } )
+
+		var geometry = new THREE.TextGeometry( 'NON/BEING', {
+		  font: font,
+		  size: fontSize ,
+		  height: 2,
+		  curveSegments: 5,
+		  bevelEnabled: true,
+		  bevelThickness: 15,
+		  bevelSize: .2,
+		  bevelSegments: 50
+		} );
+
+		var mesh = new THREE.Mesh( geometry, material );
+		mesh.position.z = - 19;
+
+		var box = new THREE.Box3().setFromObject( mesh );
+		//console.log( box.min, box.max, box.getSize() );
+
+		mesh.position.x = textX ;
+
+		const followObjMat = new THREE.MeshBasicMaterial({ color: 0xeb4034});
+		const followObjGeo = new THREE.PlaneGeometry(1,1,.5);
+
+		//
+		// var followBox = new THREE.Box3().setFromObject( followObjMat );
+		// followBox.center( followObjMat.position ); // this re-sets the mesh position
+		// followObjMat.position.multiplyScalar( - 1 );
+
+
+
+		const followObj = new THREE.Mesh(followObjGeo, followObjMat);
+
+		followObj.position.z = -2;
+
+
+
+		var followBox2 = followObjGeo.computeBoundingBox();
+		//var followbox = new THREE.BoxHelper( followObj, 0xffff00 );
+		//scene.add( followbox );
+		//scene.add( followBox2 );
+
+	  scene.add(followObj);
+
+
+
+
+		// TextGeometry.computeBoundingBox();
+		// const center = mesh.boundingBox.getCenter(new Vector3());
+
+		//THREEx.GeometryUtils.center(geometry);
+
+		//console.log("X:" , mesh.position.x);
+		//console.log("Y:" , mesh.position.y);
+
+		//mesh.position.x = -3.75;
+		scene.add(mesh);
+
+
+	  const planeWidth = 18;
+	  const planeHeight = 10;
+	  const planeDepth = 1;
+	  const planeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight, planeDepth);
+
+	  const planeMaterial = new THREE.MeshBasicMaterial( { map: imageTexture } )
+
+	  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+		plane.position.z = -3;
+
+	  scene.add(plane);
+
+
+
+	  const composer = new EffectComposer(renderer);
+	  composer.addPass(new RenderPass(scene, camera));
+
+	  const bloomPass = new BloomPass(
+	      1,    // strength
+	      25,   // kernel size
+	      4,    // sigma ?
+	      256,  // blur render target resolution
+	  );
+	  //composer.addPass(bloomPass);
+
+	  const filmPass = new FilmPass(
+	      0.35,   // noise intensity
+	      0.025,  // scanline intensity
+	      648,    // scanline count
+	      false,  // grayscale
+	  );
+
+		const customPass = new CustomPass(
+	      1.   // our cool value
+	  );
+
+		customPass.renderToScreen = true;
+
+		//composer.addPass(filmPass);
+		composer.addPass(customPass);
+
+
+
+	//	composer.addPass(customPass);
+
+		var mouseY = 0.0;
+		function onMouseMove( event )
+		{
+			 customPass.uniforms[ "coolValue" ].value = ( event.clientY / window.innerHeight );
+			 mouseY = customPass.uniforms[ "coolValue" ].value + 1. ;
+		}
+
+
+
+		document.body.addEventListener('touchmove', event => event.preventDefault());
+
+		// document.body.addEventListener("touchmove", function(event) {
+    // event.preventDefault();
+    // event.stopPropagation();
+		// 	}, false);
+
+		window.addEventListener( 'mousemove', onMouseMove, false );
+
+		var startY = 0;
+		var dist = 0;
+		var normDist;
+		var currentTouchPositionX;
+		var currentTouchPositionY;
+
+		window.addEventListener('touchstart', function(e) {
+			var touchPoint = e.changedTouches[0]; //reference first touched touchPoint
+			startY = parseInt(touchPoint.clientY);
+			//console.log('Status: touchstart <br> ClientX: ' + startX + 'px');
+			e.preventDefault();
+			e.stopPropagation();
+		}, false);
+
+		window.addEventListener('touchmove', function(e) {
+			var touchPoint = e.changedTouches[0] //reference first touch touchPoint
+			var dist = parseInt(touchPoint.clientY) - startY;
+			normDist = dist / window.innerWidth *2;
+			currentTouchPositionX = touchPoint.clientX;
+			currentTouchPositionY = touchPoint.clientY;
+			//console.log( 'Status: touchmove <br> Horizontal distance traveled:' + normDist + 'px');
+
+			e.preventDefault();
+			e.stopPropagation();
+		}, false);
+
+		window.addEventListener('touchend', function(e) {
+			var touchPoint = e.changedTouches [0] ;//reference first touchPoint
+			//console.log('Status: touchend <br> Resting x coordiante: ' + touchPoint.clientX + 'px');
+			e.preventDefault();
+			e.stopPropagation();
+
+		}, false);
+
+
+		// var mobileMouseX = 0.0;
+		// function onTouchMove( event )
+		// {
+		// 	customPass.uniforms[ "coolValue" ].value = ( event.clientX / window.innerWidth );
+		// 	mobileMouseX = customPass.uniforms[ "coolValue" ].value;
+		//
+		// }
+		//
+		// window.addEventListener('touchmove', onTouchMove, false);
+
+	  function resizeRendererToDisplaySize(renderer) {
+	    const canvas = renderer.domElement;
+	    const width = canvas.clientWidth;
+	    const height = canvas.clientHeight;
+	    const needResize = canvas.width !== width || canvas.height !== height;
+	    if (needResize) {
+	      renderer.setSize(width, height, false);
+	    }
+	    return needResize;
+	  }
+
+	  let then = 0;
+
+	  function render(now) {
+	    now *= 0.001;  // convert to seconds
+	    const deltaTime = now - then;
+	    then = now;
+
+
+
+
+			customPass.uniforms["time"].value += deltaTime * 10.;
+			console.log(customPass.uniforms["time"].value);
+
+
+
+
+
+	    if (resizeRendererToDisplaySize(renderer)) {
+	      const canvas = renderer.domElement;
+	      camera.aspect = canvas.clientWidth / canvas.clientHeight;
+	      camera.updateProjectionMatrix();
+	      composer.setSize(canvas.width, canvas.height);
+	    }
+
+
+	      //mesh.rotation.x = now;
+	      //mesh.position.x = -3.75 + Math.cos(now)*0.5;
+	      //mesh.position.y = Math.sin(now)*0.5;
+			//	console.log(mouseY);
+				//console.log("MOBILE",mobileMouseX);
+
+				plane.position.z = -mouseY -1.5;
+
+				followObj.position.x = currentTouchPositionX/window.innerWidth *4 -2;
+				followObj.position.y = currentTouchPositionY/window.innerHeight *-6 +3;
+
+				//console.log("OBJPOS X:" + followObj.position.x , "OBJPOS Y:" +
+				//followObj.position.y);
+
+				if (window.innerWidth <=800) {
+				plane.position.z = -normDist - 3;
+				customPass.uniforms[ "coolValue" ].value = -2;
+				customPass.uniforms[ "coolValue" ].value += (normDist * -3)  ;
+
+				}
+				//console.log (normDist);
+			//	console.log("CURRENT TOUCH POSITION: X " + currentTouchPositionX + " Y: " + currentTouchPositionY );
+
+				//followbox.update();
+
+
+	    composer.render(deltaTime);
+
+	    requestAnimationFrame(render);
+	  }
+
+	  requestAnimationFrame(render);
+
+	}); // called after the font is loaded
+
+}
+
+main();
+
+</script>
+
+</html>
