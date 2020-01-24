@@ -37,6 +37,7 @@ CustomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 	render: function ( renderer, writeBuffer, readBuffer, deltaTime /*, maskActive */ ) {
 
 		this.uniforms[ "mainTexture" ].value = readBuffer.texture;
+
 		//this.uniforms[ "coolValue" ].value = Math.sin(this.uniforms[ "time" ].value) * 0.5 + 0.5;
 
 		this.uniforms[ "time" ].value += deltaTime;
