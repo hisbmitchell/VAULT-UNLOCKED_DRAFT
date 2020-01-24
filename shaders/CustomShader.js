@@ -90,14 +90,16 @@ const CustomShader = {
 '{',
 	// sample the source
 		"vec4 cTextureScreen = texture2D( mainTexture, vUv );",
-		"vec2 position = mod(vUv, vec2(1.));",
+		"vec2 position = vUv;",
+
+		"position = mod(position, vec2(1.));",
 
     // Normalized pixel coordinates (from 0 to 1)
 
 
 
-    'position.x += sin(time*0.015 +  position.y*11.) * cos(time*0.08) * 0.005 ;',
-    'position.y += cos(time*0.02 +  position.x*11.) * sin(0.04) * 0.005;',
+    'position.x += sin(time*0.015 +  position.y*11.) * cos(time*0.08) * 0.05 ;',
+    'position.y += cos(time*0.02 +  position.x*11.) * sin(0.04) * 0.05;',
 
 		// 'position.y += cos(time*0.02 +  position.x*11.) * sin(0.04) * 50000.;',
 
@@ -107,15 +109,22 @@ const CustomShader = {
 
     // Time varying pixel color
 
-    'vec3 col = texture2D( mainTexture, position ).rgb;',
+    'vec3 col = texture2D( mainTexture, vec2(position.x, position.y) ).rgb;',
+
+
+		//'vec3 col = vec3(position, 0.);',
 
 
 
     'float fbmResult = fbm(vec2(length(col)*0.05, time * 0.0001))*6.;',
 
     'position += vec2(sin(.006*fbmResult), cos(8.*fbmResult))*cos(time *.003);',
+		//'position.x += vec2(sin(.006*fbmResult), cos(8.*fbmResult))*cos(time *.003);',
+		'col = sin(col + length(col)*1.5 + 100. * 0.001) * -0.49 + 0.6;',
     'col = texture2D( mainTexture, position ).rgb;',
-    'col = sin(col + length(col)*1.5 + 100. * 0.001) * -0.49 + 0.6;',
+		//'col = vec3(position, 0.);',
+
+
 
 		//'float red = abs(sin(position.x * position.y + time / 5.0));',
 
