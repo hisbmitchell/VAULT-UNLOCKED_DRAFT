@@ -20,8 +20,9 @@ THREE.EffectComposer = function ( renderer, renderTarget ) {
 		this._width = size.width;
 		this._height = size.height;
 
-		renderTarget = new THREE.WebGLRenderTarget( this._width * this._pixelRatio, this._height * this._pixelRatio, parameters );
+		renderTarget = new THREE.WebGLRenderTarget( wrapS: THREE.RepeatWrapping, wrapT: THREE.RepeatWrapping, this._width * this._pixelRatio, this._height * this._pixelRatio, parameters );
 		renderTarget.texture.name = 'EffectComposer.rt1';
+		//renderTarget.wrapT = THREE.RepeatWrapping;
 
 	} else {
 
