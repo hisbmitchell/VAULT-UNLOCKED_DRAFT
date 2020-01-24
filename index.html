@@ -4,7 +4,7 @@
 
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>NON/BEING</title>
+    <title>VAULT: UNLOCKED</title>
 
     <link rel="stylesheet" href="styles.css">
 
@@ -82,7 +82,7 @@ function main() {
 	const scene = new THREE.Scene();
 
 	{
-	  const color = 0xFFFFFF;
+	  const color = 0x84FF00;
 	  const intensity = 4;
 	  const light = new THREE.DirectionalLight(color, intensity);
 	  light.position.set(-1, 2, 4);
@@ -91,9 +91,12 @@ function main() {
 
 	var imageTexture = new THREE.TextureLoader().load( 'textures/liquid_chrome.jpg' );
 
+	//imageTexture.wrapS = 	imageTexture.wrapT = THREE.RepeatWrapping;
+//	imageTexture.repeat.set( 3, 3 );
 
-	imageTexture.wrapS = imageTexture.wrapT = THREE.RepeatWrapping;
-	
+
+
+
 	var envTexture = new THREE.TextureLoader().load( 'textures/map.jpg' );
 
 
@@ -119,21 +122,23 @@ function main() {
 
 		//var material = new THREE.MeshLambertMaterial( { color: 0x0033ff, specular: 0x555555, shininess: 30 } );
 
-		var material = new THREE.MeshLambertMaterial( { color: 0xeb4034, ambient: 0xeb4034 } )
+		var material = new THREE.MeshLambertMaterial( { color: 0x84FF00, ambient: 0x84FF00 } )
 
-		var geometry = new THREE.TextGeometry( 'NON/BEING', {
+
+		var geometry = new THREE.TextGeometry( 'VAULT', {
 		  font: font,
 		  size: fontSize ,
 		  height: 2,
 		  curveSegments: 5,
 		  bevelEnabled: true,
-		  bevelThickness: 15,
+		  bevelThickness: 5,
 		  bevelSize: .2,
 		  bevelSegments: 50
+
 		} );
 
 		var mesh = new THREE.Mesh( geometry, material );
-		mesh.position.z = - 19;
+		mesh.position.z = - 10;
 
 		var box = new THREE.Box3().setFromObject( mesh );
 		//console.log( box.min, box.max, box.getSize() );
@@ -178,15 +183,17 @@ function main() {
 		scene.add(mesh);
 
 
-	  const planeWidth = 18;
-	  const planeHeight = 10;
+	  const planeWidth = 21.09375;
+	  const planeHeight = 10.;
 	  const planeDepth = 1;
 	  const planeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight, planeDepth);
 
-	  const planeMaterial = new THREE.MeshBasicMaterial( { map: imageTexture } )
+	  const planeMaterial = new THREE.MeshBasicMaterial( { map: imageTexture } );
+
+
 
 	  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-		plane.position.z = -3;
+		plane.position.z = -30;
 
 	  scene.add(plane);
 
@@ -214,7 +221,12 @@ function main() {
 	      1.   // our cool value
 	  );
 
+		//customPass.uniforms[ "mainTexture" ].value.wrapS = THREE.RepeatWrapping;
+
+		//uniforms.texture.value.wrapS = uniforms.texture.value.wrapT = THREE.RepeatWrapping
+
 		customPass.renderToScreen = true;
+
 
 		//composer.addPass(filmPass);
 		composer.addPass(customPass);
@@ -276,15 +288,15 @@ function main() {
 		}, false);
 
 
-		// var mobileMouseX = 0.0;
-		// function onTouchMove( event )
-		// {
-		// 	customPass.uniforms[ "coolValue" ].value = ( event.clientX / window.innerWidth );
-		// 	mobileMouseX = customPass.uniforms[ "coolValue" ].value;
-		//
-		// }
-		//
-		// window.addEventListener('touchmove', onTouchMove, false);
+		var mobileMouseX = 0.0;
+		function onTouchMove( event )
+		{
+			customPass.uniforms[ "coolValue" ].value = ( event.clientX / window.innerWidth );
+			mobileMouseX = customPass.uniforms[ "coolValue" ].value;
+
+		}
+
+		window.addEventListener('touchmove', onTouchMove, false);
 
 	  function resizeRendererToDisplaySize(renderer) {
 	    const canvas = renderer.domElement;
